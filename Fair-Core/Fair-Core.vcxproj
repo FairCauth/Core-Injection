@@ -112,7 +112,7 @@
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
-      <AdditionalIncludeDirectories>$(SolutionDir)ext\includes;D:\VC_Lib\OpenSSL-Win64\include;D:\VC_Lib\boost_1_85;D:\VC_Lib\web;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)ext\includes;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <DisableSpecificWarnings>4996</DisableSpecificWarnings>
     </ClCompile>
@@ -120,8 +120,8 @@
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableUAC>false</EnableUAC>
-      <AdditionalDependencies>minhook.x64.lib;libssl.lib;libcrypto.lib;$(CoreLibraryDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>D:\VC_Lib\boost_1_85\lib64-msvc-14.3;$(SolutionDir)ext\libs;D:\VC_Lib\OpenSSL-Win64\lib\VC\x64\MT;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>minhook.x64.lib;$(CoreLibraryDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(SolutionDir)ext\libs;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -135,7 +135,7 @@
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <LanguageStandard>stdcpp17</LanguageStandard>
-      <AdditionalIncludeDirectories>$(SolutionDir)ext\includes;D:\VC_Lib\OpenSSL-Win64\include;D:\VC_Lib\boost_1_85;D:\VC_Lib\web;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)ext\includes;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <DisableSpecificWarnings>4996</DisableSpecificWarnings>
     </ClCompile>
     <Link>
@@ -144,8 +144,8 @@
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableUAC>false</EnableUAC>
-      <AdditionalLibraryDirectories>D:\VC_Lib\boost_1_85\lib64-msvc-14.3;$(SolutionDir)ext\libs;D:\VC_Lib\OpenSSL-Win64\lib\VC\x64\MT;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>minhook.x64.lib;libssl.lib;libcrypto.lib;$(CoreLibraryDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(SolutionDir)ext\libs;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>minhook.x64.lib;$(CoreLibraryDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
