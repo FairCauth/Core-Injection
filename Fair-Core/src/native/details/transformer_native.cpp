@@ -33,7 +33,7 @@ jint JNICALL native_functions::redefineClasses(JNIEnv* env, jclass cls, jclass t
     classDef.class_bytes = (unsigned char*)bytes;
     jvmtiError error = jvm_context::get_jvmTi()->RedefineClasses(1, &classDef);
     //sendMsg("Redefine class ");
-
+    //JVMTI_ERROR_UNSUPPORTED_REDEFINITION_SCHEMA_CHANGED
     env->ReleaseByteArrayElements(newClassBytes, bytes, JNI_ABORT);
     return (jint)error;
 }

@@ -145,7 +145,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableUAC>false</EnableUAC>
       <AdditionalLibraryDirectories>$(SolutionDir)ext\libs;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>minhook.x64.lib;$(CoreLibraryDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>minhook.x64.lib;d3d9.lib;$(CoreLibraryDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
@@ -155,18 +155,36 @@
     <ClCompile Include="src\common\jvm\jvm_context.cpp" />
     <ClCompile Include="src\dist\jsoncpp.cpp" />
     <ClCompile Include="src\dllmain.cpp" />
+    <ClCompile Include="src\ImGui\imgui.cpp" />
+    <ClCompile Include="src\ImGui\imgui_demo.cpp" />
+    <ClCompile Include="src\ImGui\imgui_draw.cpp" />
+    <ClCompile Include="src\ImGui\imgui_impl_dx11.cpp" />
+    <ClCompile Include="src\ImGui\imgui_impl_dx9.cpp" />
+    <ClCompile Include="src\ImGui\imgui_impl_win32.cpp" />
+    <ClCompile Include="src\ImGui\imgui_tables.cpp" />
+    <ClCompile Include="src\ImGui\imgui_widgets.cpp" />
     <ClCompile Include="src\inject\game_hook.cpp" />
     <ClCompile Include="src\native\details\natives.cpp" />
     <ClCompile Include="src\native\details\skia_hook_native.cpp" />
     <ClCompile Include="src\native\details\transformer_native.cpp" />
     <ClCompile Include="src\native\native_bridge.cpp" />
     <ClCompile Include="src\native\preload\preloader.cpp" />
+    <ClCompile Include="src\ui\Gui.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\common\jvm\jvm_context.h" />
     <ClInclude Include="src\common\utils.h" />
     <ClInclude Include="src\dist\json\json-forwards.h" />
     <ClInclude Include="src\dist\json\json.h" />
+    <ClInclude Include="src\ImGui\imconfig.h" />
+    <ClInclude Include="src\ImGui\imgui.h" />
+    <ClInclude Include="src\ImGui\imgui_impl_dx11.h" />
+    <ClInclude Include="src\ImGui\imgui_impl_dx9.h" />
+    <ClInclude Include="src\ImGui\imgui_impl_win32.h" />
+    <ClInclude Include="src\ImGui\imgui_internal.h" />
+    <ClInclude Include="src\ImGui\imstb_rectpack.h" />
+    <ClInclude Include="src\ImGui\imstb_textedit.h" />
+    <ClInclude Include="src\ImGui\imstb_truetype.h" />
     <ClInclude Include="src\inject\game_hook.h" />
     <ClInclude Include="src\native\details\natives.h" />
     <ClInclude Include="src\native\details\transformer_native.h" />
@@ -174,6 +192,8 @@
     <ClInclude Include="src\native\preload\classes.h" />
     <ClInclude Include="src\native\preload\preloader.h" />
     <ClInclude Include="src\native\preload\preloader_class.h" />
+    <ClInclude Include="src\ui\Font.h" />
+    <ClInclude Include="src\ui\Gui.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
