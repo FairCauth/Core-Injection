@@ -15,8 +15,7 @@ static HWND hwnd = NULL;
 static LPDIRECT3D9              g_pD3D = NULL;
 static LPDIRECT3DDEVICE9        g_pd3dDevice = NULL;
 static D3DPRESENT_PARAMETERS    g_d3dpp = {};
-static float WINDOW_WIDTH = 840;
-static float WINDOW_HEIGHT = 550;
+
 bool done = false;
 bool g_NeedReset = false;
 #include "Font.h"
@@ -24,9 +23,8 @@ extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg
 LRESULT WINAPI WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 
 
-static char text[1024] = "";
-static char pwd[1024] = "";
-static bool remember ;
+#include "panel.h"
+
 void gui::init() {
     WNDCLASSEX wc = { sizeof(WNDCLASSEX), CS_CLASSDC, WndProc, 0L, 0L, GetModuleHandle(NULL), NULL, NULL, NULL, NULL, L"Window", NULL };
     ::RegisterClassEx(&wc);
@@ -60,7 +58,8 @@ void gui::init() {
     ImFontConfig Font_cfg;
     Font_cfg.FontDataOwnedByAtlas = false;
 
-    ImFont* Font = io.Fonts->AddFontFromMemoryTTF((void*)Font_data, Font_size, 16, &Font_cfg, io.Fonts->GetGlyphRangesChineseFull());
+    Font = io.Fonts->AddFontFromMemoryTTF((void*)Font_data, Font_size, 16, &Font_cfg, io.Fonts->GetGlyphRangesChineseFull());
+    glitchText = io.Fonts->AddFontFromMemoryTTF((void*)Font_data, Font_size, 32, &Font_cfg, io.Fonts->GetGlyphRangesChineseFull());
     done = false;
     while (!done)
     {
@@ -90,47 +89,13 @@ void gui::init() {
 
             ImGuiStyle& style = ImGui::GetStyle();
 
-            float child_width = 400, child_height = 200;
             ImGui::Begin("ImGui Window", nullptr, ImGuiWindowFlags_NoScrollWithMouse | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoMove);
             {
                 style.FrameRounding = 5;
                
-
-                if (ImGui::BeginTabBar("Bar1")) {
-                    if (ImGui::BeginTabItem("Login")) {
-                        ImGui::SetCursorPos({ WINDOW_WIDTH / 2.0f - child_width / 2.0f, WINDOW_HEIGHT / 2.0f - child_height / 2.0f });
-
-                        ImGui::BeginChild("##A", { child_width, child_height }, false, ImGuiWindowFlags_NoScrollbar);
-                        ImGui::SetCursorPos({ 25, 20 });
-                        ImGui::Text("Account");
-
-                        ImGui::SetCursorPos({ 100, 20 });
-                        ImGui::InputText("##A", text, sizeof(text));
-
-                        ImGui::SetCursorPos({ 25, 60 });
-                        ImGui::Text("Password");
-
-                        ImGui::SetCursorPos({ 100, 60 });
-                        ImGui::InputText("##B", pwd, sizeof(pwd), ImGuiInputTextFlags_Password);
-
-
-                        ImGui::SetCursorPos({ 230, 90 });
-                        ImGui::Checkbox("Remember Me", &remember);
-
-
-                        ImGui::SetCursorPos({ 150, 140 });
-                        if (ImGui::Button("Login", { 100, 40 })) {
-                            MessageBoxA(NULL, "Login OK!", NULL, NULL);
-                        }
-                        ImGui::EndChild();
-                        ImGui::EndTabItem();
-                    }
-                    if (ImGui::BeginTabItem("Register")) {
-
-                    }
-                }
-
-               
+                ImGui::PushFont(Font);
+                panel::on_draw(*this);
+                ImGui::PopFont();
                 style.FrameRounding = 0;
 
             }
@@ -213,8 +178,8 @@ LRESULT WINAPI WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
     switch (msg)
     {
     case WM_SIZE:
-        WINDOW_WIDTH = LOWORD(lParam);
-        WINDOW_HEIGHT = HIWORD(lParam); 
+        gui::WINDOW_WIDTH = LOWORD(lParam);
+        gui::WINDOW_HEIGHT = HIWORD(lParam);
 
         if (g_pd3dDevice != NULL && wParam != SIZE_MINIMIZED)
         {

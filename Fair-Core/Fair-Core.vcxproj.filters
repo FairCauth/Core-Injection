@@ -78,6 +78,15 @@
     <ClCompile Include="src\ImGui\imgui_widgets.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="src\ui\panel.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="src\socket\localserver.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="src\common\instance\others.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\common\utils.h">
@@ -144,6 +153,12 @@
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="src\ImGui\imstb_truetype.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ui\panel.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="src\socket\localserver.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>

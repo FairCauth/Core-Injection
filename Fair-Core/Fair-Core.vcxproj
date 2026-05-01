@@ -151,6 +151,7 @@
   <ItemGroup>
     <ClCompile Include="src\common\instance\jni_func.cpp" />
     <ClCompile Include="src\common\instance\convert.cpp" />
+    <ClCompile Include="src\common\instance\others.cpp" />
     <ClCompile Include="src\common\instance\utils.cpp" />
     <ClCompile Include="src\common\jvm\jvm_context.cpp" />
     <ClCompile Include="src\dist\jsoncpp.cpp" />
@@ -169,7 +170,9 @@
     <ClCompile Include="src\native\details\transformer_native.cpp" />
     <ClCompile Include="src\native\native_bridge.cpp" />
     <ClCompile Include="src\native\preload\preloader.cpp" />
+    <ClCompile Include="src\socket\localserver.cpp" />
     <ClCompile Include="src\ui\Gui.cpp" />
+    <ClCompile Include="src\ui\panel.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\common\jvm\jvm_context.h" />
@@ -192,8 +195,10 @@
     <ClInclude Include="src\native\preload\classes.h" />
     <ClInclude Include="src\native\preload\preloader.h" />
     <ClInclude Include="src\native\preload\preloader_class.h" />
+    <ClInclude Include="src\socket\localserver.h" />
     <ClInclude Include="src\ui\Font.h" />
     <ClInclude Include="src\ui\Gui.h" />
+    <ClInclude Include="src\ui\panel.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

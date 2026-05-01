@@ -1,6 +1,7 @@
 #include "transformer_native.h"
 #include "natives.h"
-
+#include <sstream>
+#include <iostream>
 jboolean JNICALL native_functions::startup(JNIEnv* env, jclass clazz) {
     jvmtiCapabilities capabilities;
     memset(&capabilities, 0, sizeof(jvmtiCapabilities));
@@ -35,6 +36,8 @@ jint JNICALL native_functions::redefineClasses(JNIEnv* env, jclass cls, jclass t
     //sendMsg("Redefine class ");
     //JVMTI_ERROR_UNSUPPORTED_REDEFINITION_SCHEMA_CHANGED
     env->ReleaseByteArrayElements(newClassBytes, bytes, JNI_ABORT);
+    
+
     return (jint)error;
 }
 

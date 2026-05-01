@@ -22,4 +22,8 @@ namespace utils {
 		jobject get_classloader_from_name(JNIEnv* env, const char* thread_name);
 		jclass find_class_global(const char* signature);
 	}
+	namespace others {
+		bool inject_dll(DWORD processID, const char* dllPath);
+		DWORD get_process_id(const char* processName);
+	}
 }

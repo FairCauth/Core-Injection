@@ -2,6 +2,7 @@
 #include "inject/game_hook.h"
 #include <string>
 #include <tlhelp32.h>
+#include <iostream>
 DWORD WINAPI run(LPVOID lpParam) {
     game_hook::install_hook();
     return 0;
@@ -17,6 +18,12 @@ bool isRunningInRundll32() {
     for (auto& c : exeName) c = towlower(c);
     return exeName == L"rundll32.exe";
 }
+void AllocConsole_Init() {
+    AllocConsole();
+    freopen_s((FILE**)stdout, "CONOUT$", "w", stdout);
+    freopen_s((FILE**)stderr, "CONOUT$", "w", stderr);
+    std::ios::sync_with_stdio(true);
+}
 BOOL APIENTRY DllMain( HMODULE hModule,
                        DWORD  ul_reason_for_call,
                        LPVOID lpReserved
@@ -27,7 +34,6 @@ BOOL APIENTRY DllMain( HMODULE hModule,
     case DLL_PROCESS_ATTACH:
         if(!isRunningInRundll32())
             CreateThread(NULL, 0, run, NULL, 0, NULL);
-        
         break;
     }
     return TRUE;
@@ -35,8 +41,10 @@ BOOL APIENTRY DllMain( HMODULE hModule,
 #include "ui/Gui.h"
 HANDLE g_thread = NULL;
 extern "C" __declspec(dllexport) void CALLBACK Run(HWND hwnd, HINSTANCE hinst, LPSTR str, int ns) {
+    AllocConsole_Init();
     gui main_gui = gui();
     main_gui.init();
+    FreeConsole();
     ExitProcess(0);
 
 }
