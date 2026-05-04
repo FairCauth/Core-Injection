@@ -3,6 +3,9 @@
 #include <string>
 #include <tlhelp32.h>
 #include <iostream>
+
+#include "client/module/ModuleManager.h"
+#include "client/module/category/CategoryManager.h"
 DWORD WINAPI run(LPVOID lpParam) {
     game_hook::install_hook();
     return 0;
@@ -38,10 +41,21 @@ BOOL APIENTRY DllMain( HMODULE hModule,
     }
     return TRUE;
 }
-#include "ui/Gui.h"
+#include "ui/panel.h"
 HANDLE g_thread = NULL;
 extern "C" __declspec(dllexport) void CALLBACK Run(HWND hwnd, HINSTANCE hinst, LPSTR str, int ns) {
     AllocConsole_Init();
+
+    CategoryManager::init();
+    ModuleManager::init();
+    localserver::init();
+
+    if (localserver::check_port(8888)) {
+        panel::currentPage = panel::Page::Main;
+    }
+    else {
+        panel::currentPage = panel::Page::Login;
+    }
     gui main_gui = gui();
     main_gui.init();
     FreeConsole();

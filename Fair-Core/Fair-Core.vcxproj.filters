@@ -161,5 +161,35 @@
     <ClInclude Include="src\socket\localserver.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="src\client\module\category\Categories.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="src\client\module\category\Category.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="src\client\module\category\CategoryManager.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="src\client\module\modules\TestModule.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="src\client\module\Module.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="src\client\module\ModuleManager.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="src\client\setting\Setting.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="src\client\setting\SettingBase.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="src\client\setting\SettingManager.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="src\client\setting\Settings.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

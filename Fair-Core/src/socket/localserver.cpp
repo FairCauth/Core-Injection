@@ -9,6 +9,7 @@
 
 static SOCKET g_serverSock = INVALID_SOCKET;
 static SOCKET g_clientSock = INVALID_SOCKET;
+static std::string g_recvBuf;  // 全局拼接缓冲区
 
 static void server_thread() {
     WSADATA wsaData;
@@ -41,10 +42,21 @@ static void server_thread() {
             break;
         }
 
-        std::string reply = panel::from_client(std::string(buf));
-        if (reply != "") {
-            reply += "\n";
-            send(g_clientSock, reply.c_str(), reply.size(), 0);
+        g_recvBuf += std::string(buf, received);  // 拼到缓冲区
+
+        // 按 \n 切割，有几条处理几条
+        size_t pos;
+        while ((pos = g_recvBuf.find('\n')) != std::string::npos) {
+            std::string line = g_recvBuf.substr(0, pos);
+            g_recvBuf.erase(0, pos + 1);
+
+            if (line.empty()) continue;
+
+            std::string reply = panel::from_client(line);
+            if (!reply.empty()) {
+                reply += "\n";
+                send(g_clientSock, reply.c_str(), (int)reply.size(), 0);
+            }
         }
     }
 
@@ -59,7 +71,27 @@ void localserver::init() {
     std::thread t(server_thread);
     t.detach();
 }
+void localserver::send(const std::string& message) {
+    if (g_clientSock == INVALID_SOCKET) return;
+    std::string msg = message + "\n";
+    ::send(g_clientSock, msg.c_str(), (int)msg.size(), 0);
+}
+bool localserver::check_port(int port) {
+    WSADATA wsaData;
+    WSAStartup(MAKEWORD(2, 2), &wsaData);
 
+    SOCKET sock = socket(AF_INET, SOCK_STREAM, 0);
+    sockaddr_in addr{};
+    addr.sin_family = AF_INET;
+    addr.sin_port = htons(port);
+    inet_pton(AF_INET, "127.0.0.1", &addr.sin_addr);
+
+    int result = connect(sock, (sockaddr*)&addr, sizeof(addr));
+    closesocket(sock);
+    WSACleanup();
+
+    return result == 0;  // 连接成功说明端口被占用，Java已启动
+}
 void localserver::shutdown() {
     if (g_clientSock != INVALID_SOCKET) {
         closesocket(g_clientSock);

@@ -17,7 +17,7 @@ void preloader::define_loader(JNIEnv* env) {
 		//idea启动或mod启动 不执行加载
 		return;
 	}
-	MessageBox(NULL, L"准备注入", L"A", MB_OK | MB_ICONWARNING);
+	//MessageBox(NULL, L"准备注入", L"A", MB_OK | MB_ICONWARNING);
 	utils::writeLog("define preloader success!");
 	//注入jar
 	jobjectArray classesData = (jobjectArray)env->CallStaticObjectMethod(loaderClass, env->GetStaticMethodID(loaderClass, "getByteArray", "(I)[[B"), (jint)classCount);

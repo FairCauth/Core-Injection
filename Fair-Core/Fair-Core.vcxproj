@@ -175,6 +175,16 @@
     <ClCompile Include="src\ui\panel.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\client\module\category\Categories.h" />
+    <ClInclude Include="src\client\module\category\Category.h" />
+    <ClInclude Include="src\client\module\category\CategoryManager.h" />
+    <ClInclude Include="src\client\module\Module.h" />
+    <ClInclude Include="src\client\module\ModuleManager.h" />
+    <ClInclude Include="src\client\module\modules\TestModule.h" />
+    <ClInclude Include="src\client\setting\Setting.h" />
+    <ClInclude Include="src\client\setting\SettingBase.h" />
+    <ClInclude Include="src\client\setting\SettingManager.h" />
+    <ClInclude Include="src\client\setting\Settings.h" />
     <ClInclude Include="src\common\jvm\jvm_context.h" />
     <ClInclude Include="src\common\utils.h" />
     <ClInclude Include="src\dist\json\json-forwards.h" />

@@ -220,8 +220,13 @@ std::string get_self_path() {
     return s.substr(0, s.find_last_of("\\/"));
 }
 int max = 0;
+#include "..\dist\json\json.h"
+#include "..\client\module\Module.h"
+#include "..\client\module\ModuleManager.h"
+
 std::string panel::from_client(std::string msg) {
-    std::cout << "[recv] " << msg;
+   // std::cout << "[recv] " << msg << std::endl;
+    bool printLog = true;
     if (msg.find("run!") != std::string::npos) {
         SetLoginProgress(0.1f);
         return get_self_path();
@@ -238,8 +243,135 @@ std::string panel::from_client(std::string msg) {
     
     if (msg.find("init ok") != std::string::npos) {
         SetLoginProgress(1.0f);
+        panel::currentPage = panel::Page::Main;
+        //localserver::shutdown();
+    }
+    if (msg.find("init gui") != std::string::npos) {
+        std::cout << "初始化GUI" << std::endl;
+        ModuleManager::clear();
+        SettingManager::clear();
+    }
+    if (msg.find("{") != std::string::npos) {
+        printLog = false;
+        Json::Reader reader;
+        Json::Value root;
+        bool success = reader.parse(msg, root);
+        if (!success) {
+            std::cout << "Error json " << msg << std::endl;
+        }
+        std::string type = root["type"].asString();
+        if (type == "register_module") {
+            std::string moduleName = root["module"].asString();
+            std::string category = root["category"].asString();
+            int key = root["key"].asInt();
+            bool enable = root["enable"].asInt();
+            std::cout << "register_module " << moduleName << " " << category << std::endl;
+            Module* module = new Module(moduleName, category, key);
+            module->setEnable(enable);
+            ModuleManager::registerModule(module);
+        }
+        if (type == "register_setting") {
+            std::string moduleName = root["module"].asString();
+            std::string settingName = root["setting"].asString();
+            std::cout << "register_setting " << moduleName << " " << settingName << std::endl;
+            std::string setting_type = root["setting_type"].asString();
+            int level = root["level"].asInt();
+            bool display = root["display"].asBool();
+            Module* mod = ModuleManager::getModule(moduleName);
+            if (setting_type == "boolean") {
+                bool value = root["value"].asBool();
+                Setting<bool>* setting = new BooleanSetting(settingName, value);
+                setting->level = level;
+                setting->display = display;
+                mod->registerSetting(setting);
+            }
+            else if (setting_type == "number") {
+                float value = root["value"].asFloat();
+                float min = root["min"].asFloat();
+                float max = root["max"].asFloat();
+                std::string precise = root["precise"].asString();
+                Setting<float>* setting = new NumberSetting(settingName, value, min, max, precise);
+                setting->level = level;
+                setting->display = display;
+                mod->registerSetting(setting);
+            }
+            else if (setting_type == "mode") {
+                std::string value = root["value"].asString();
+                Json::Value modes = root["modes"];
 
-        localserver::shutdown();
+                std::vector<std::string> modeList;
+                for (int i = 0; i < modes.size(); i++) 
+                    modeList.push_back(modes[i].asString());
+                
+                Setting<std::string>* setting = new ModeSetting(settingName, value, modeList);
+                setting->level = level;
+                setting->display = display;
+                mod->registerSetting(setting);
+            }
+
+        }
+
+        if (type == "update_module") {
+            std::string moduleName = root["module"].asString();
+            int key = root["key"].asInt();
+            bool enable = root["enable"].asInt();
+            Module* module = ModuleManager::getModule(moduleName);
+            module->setEnable(enable);
+            module->key = key;
+        }
+        if (type == "update_setting") {
+            std::string moduleName = root["module"].asString();
+            std::string settingName = root["setting"].asString();
+            //std::cout << "update_setting " << moduleName << " " << settingName << std::endl;
+            std::string setting_type = root["setting_type"].asString();
+            bool display = root["display"].asBool();
+            Module* mod = ModuleManager::getModule(moduleName);
+            if (mod == nullptr) {
+                std::cout << "update_setting: module not found: " << moduleName << std::endl;
+                return "";
+            }
+            if (setting_type == "boolean") {
+                bool value = root["value"].asBool();
+                Setting<bool>* setting = SettingManager::getSetting<bool>(mod, settingName);
+                if (setting == nullptr) {
+                    std::cout << "update_setting: setting not found: " << settingName << std::endl;
+                    return "";
+                }
+                setting->setValue(value);
+                setting->display = display;
+            }
+            else if (setting_type == "number") {
+                float value = root["value"].asFloat();
+                Setting<float>* setting = SettingManager::getSetting<float>(mod, settingName);
+                if (setting == nullptr) {
+                    std::cout << "update_setting: setting not found: " << settingName << std::endl;
+                    return "";
+                }
+                setting->setValue(value);
+                setting->display = display;
+            }
+            else if (setting_type == "mode") {
+                std::string value = root["value"].asString();
+                Setting<std::string>* setting = SettingManager::getSetting<std::string>(mod, settingName);
+                if (setting == nullptr) {
+                    std::cout << "update_setting: setting not found: " << settingName << std::endl;
+                    return "";
+                }
+                ModeSetting* mode = dynamic_cast<ModeSetting*>(setting);
+                for (size_t i = 0; i < mode->values.size(); i++) {
+                    if (mode->values[i] == value) mode->current = i;
+                }
+                setting->setValue(value);
+                setting->display = display;
+                //Setting<std::string>* setting = new ModeSetting(settingName, value);
+            }
+        }
+
+
+    }
+
+    if (printLog) {
+        std::cout << "[recv] " << msg << std::endl;
     }
     return "";
 }
@@ -299,7 +431,8 @@ void RefreshJavaList() {
 
     CloseHandle(snapshot);
 }
-void panel::on_draw(gui& gui) {
+
+void draw_login_gui(gui& gui) {
     if (ImGui::BeginTabBar("Bar1")) {
         if (ImGui::BeginTabItem("Login")) {
             std::string str = "Test Client";
@@ -318,7 +451,7 @@ void panel::on_draw(gui& gui) {
             ImGui::BeginChild("##A", { child_width, child_height }, false, ImGuiWindowFlags_NoScrollbar);
             if (!g_LoginLoading)
             {
- 
+
 
                 ImGui::SetCursorPos({ 25, 20 });
                 ImGui::Text("Account");
@@ -404,7 +537,8 @@ void panel::on_draw(gui& gui) {
                     g_LoginLoading = false;
                     g_ProgressCurrent = 0.0f;
                     g_ProgressTarget = 0.0f;
-                    MessageBoxA(NULL, "Injected", NULL, NULL);
+                    
+                    //MessageBoxA(NULL, "Injected", NULL, NULL);
                 }
             }
             ImGui::EndChild();
@@ -416,6 +550,200 @@ void panel::on_draw(gui& gui) {
 
         }
     }
+
+}
+
+#include "..\client\module\ModuleManager.h"
+#include "..\client\module\category\CategoryManager.h"
+static Category* currentCategory = nullptr;
+static bool globalFilter = true;
+void draw_main_gui(gui& gui) {
+    static int selectedItem = -1;
+    #pragma region CategoriesMenu
+    ImGui::SetCursorPos({ 2,3 });
+
+    if (ImGui::BeginTabBar("MyTabBar")) {
+        for (auto categoryMap : CategoryManager::getCategories()) {
+            if (ImGui::BeginTabItem(categoryMap.first.c_str()))
+            {
+                currentCategory = categoryMap.second;
+                ImGui::EndTabItem();
+            }
+        }
+    }
+
+    #pragma endregion
+
+    if (currentCategory != nullptr) {
+        std::string filterText(text);
+
+        std::vector<Module*> modules = (globalFilter && !filterText.empty()) ? 
+            ModuleManager::getFilteredModules(filterText) : 
+            ModuleManager::getModulesFromCategory(*currentCategory, filterText
+        );
+        
+        #pragma region 搜索框
+        if (selectedItem > modules.size() - 1) selectedItem = -1;
+        ImGui::SetNextItemWidth(240);
+        ImGui::InputText("##Filter", text, sizeof(text));
+        ImGui::SameLine();
+        ImGui::Text("Filter");
+        ImGui::SameLine();
+
+        ImGui::Checkbox("All Modules", &globalFilter);
+        
+        #pragma endregion
+
+        #pragma region 模块列表框
+        if (ImGui::BeginListBox("##listbox", ImVec2(150, gui::WINDOW_HEIGHT - 70))) {
+            int index = 0;
+            for (auto module : modules) {
+                bool isSelected = (currentCategory->selectedItemIndex == index);
+                if (ImGui::Selectable(module->getName().c_str(), isSelected || module->isEnable())) {
+                    selectedItem = index;
+                    //currentCategory = module->category;
+                    currentCategory->selectedItemIndex = index;
+                }
+
+                if (isSelected) {
+                    ImGui::SetItemDefaultFocus();
+                }
+                ++index;
+            }
+            ImGui::EndListBox();
+        }
+        #pragma endregion
+        ImGui::SameLine();
+        if (selectedItem != -1 && !modules.empty() && currentCategory->selectedItemIndex != -1) {
+
+            Module* selectedModule = modules[currentCategory->selectedItemIndex];
+            ImGui::BeginChild("##A", { gui::WINDOW_WIDTH - 170 , gui::WINDOW_HEIGHT }, false, ImGuiWindowFlags_NoScrollbar);
+
+
+            #pragma region 模块标题栏 
+            ImGui::BeginChild("##B", { gui::WINDOW_WIDTH - 170  , 23 }, false);
+            ImGui::Text(selectedModule->getName().c_str());
+            //ImGui::SameLine();
+            ImGui::Separator();
+            ImGui::EndChild();
+            #pragma endregion
+
+            //设置
+            ImGui::BeginChild("##C", { gui::WINDOW_WIDTH - 170 , gui::WINDOW_HEIGHT - 100 }, false);
+            bool enable = selectedModule->enable;
+            if (ImGui::Checkbox("Enable", &enable)) {
+                Json::Value json;
+                Json::FastWriter writer;
+                json["type"] = "update_module";
+                json["module"] = selectedModule->getName();
+                json["enable"] = enable;
+                const std::string data = writer.write(json);
+                localserver::send(data);
+            }
+            #pragma region 设置组件
+            for (auto setting : SettingManager::getSettings(selectedModule))
+            {
+                auto getInfo = [&](int level, bool display) -> int {
+                    if (!display) return -1;
+                    int offsetX = level * 20 + 4;
+                    if (offsetX != 4) {
+                        ImVec2 cursorPos = ImGui::GetCursorScreenPos();
+                        ImVec2 nodePos = ImVec2(cursorPos.x, cursorPos.y + ImGui::GetTextLineHeight() * 0.6f);
+                        ImDrawList* draw_list = ImGui::GetWindowDrawList();
+                        draw_list->AddLine(nodePos, ImVec2(nodePos.x + level * 20 - 6, nodePos.y), IM_COL32(200, 200, 200, 255), 1.0f);
+                        draw_list->AddLine(nodePos, ImVec2(nodePos.x, nodePos.y - 26), IM_COL32(200, 200, 200, 255), 1.0f);
+                    }
+                    return offsetX;
+                };
+
+                #pragma region BooleanSetting
+                if (auto booleanSetting = dynamic_cast<BooleanSetting*>(setting.second)) {
+                    int offsetX = getInfo(booleanSetting->level, booleanSetting->display);
+                    if (offsetX == -1) continue;
+                    ImGui::SetCursorPosX(offsetX);
+                    bool value = booleanSetting->getValue();
+                    if (ImGui::Checkbox(booleanSetting->getName().c_str(), &value)) {
+                        Json::Value json;
+                        Json::FastWriter writer;
+                        json["type"] = "update_setting";
+                        json["update_type"] = "boolean";
+                        json["module"] = selectedModule->getName();
+                        json["setting"] = booleanSetting->getName();
+                        json["value"] = value;
+                        const std::string data = writer.write(json);
+                        localserver::send(data);
+
+  
+                    }
+                }
+                #pragma endregion
+
+                #pragma region NumberSetting
+                else if (auto numberSetting = dynamic_cast<NumberSetting*>(setting.second)) {
+                    int offsetX = getInfo(numberSetting->level, numberSetting->display);
+                    if (offsetX == -1) continue;
+
+                    ImGui::SetCursorPosX(offsetX);
+
+                    float value = numberSetting->getValue();
+                    if (ImGui::SliderFloat(numberSetting->getName().c_str(), &value, numberSetting->minValue, numberSetting->maxValue, numberSetting->precisePattern.c_str())) {
+                        Json::Value json;
+                        Json::FastWriter writer;
+                        json["type"] = "update_setting";
+                        json["update_type"] = "number";
+                        json["module"] = selectedModule->getName();
+                        json["setting"] = numberSetting->getName();
+                        json["value"] = value;
+                        const std::string data = writer.write(json);
+                        localserver::send(data);
+                    }
+                }
+                #pragma endregion
+
+                #pragma region ModeSetting
+                else if (auto modeSetting = dynamic_cast<ModeSetting*>(setting.second)) {
+                    int offsetX = getInfo(modeSetting->level, modeSetting->display);
+                    if (offsetX == -1) continue;
+
+                    ImGui::SetCursorPosX(offsetX);
+                    ImGui::SetNextItemWidth(160);
+                    int current = modeSetting->current;
+                    if (ImGui::Combo(setting.first.c_str(), &current, modeSetting->arr, modeSetting->values.size())) {
+                        modeSetting->setModeValue(current);
+                        Json::Value json;
+                        Json::FastWriter writer;
+                        json["type"] = "update_setting";
+                        json["update_type"] = "mode";
+                        json["module"] = selectedModule->getName();
+                        json["setting"] = modeSetting->getName();
+                        json["value"] = modeSetting->values[current];
+                        const std::string data = writer.write(json);
+                        localserver::send(data);
+                    }
+                }
+                #pragma endregion
+            }
+            #pragma endregion
+            ImGui::EndChild();
+
+        }
+    }
+}
+
+
+
+void panel::on_draw(gui& gui) {
+
+    switch (currentPage)
+    {
+    case Login:
+        draw_login_gui(gui);
+        break;
+    case Main:
+        draw_main_gui(gui);
+        break;
+    }
+
 
 }
 
