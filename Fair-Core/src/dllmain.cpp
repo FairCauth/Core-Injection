@@ -50,7 +50,9 @@ extern "C" __declspec(dllexport) void CALLBACK Run(HWND hwnd, HINSTANCE hinst, L
     ModuleManager::init();
     localserver::init();
 
+    //panel::currentPage = panel::Page::Main;
     if (localserver::check_port(8888)) {
+        localserver::send_to_java("reconnect_gui");
         panel::currentPage = panel::Page::Main;
     }
     else {

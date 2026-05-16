@@ -219,17 +219,41 @@ std::string get_self_path() {
     std::string s(path);
     return s.substr(0, s.find_last_of("\\/"));
 }
+std::string get_self_name() {
+
+    char path[MAX_PATH];
+
+    HMODULE hModule = NULL;
+
+    GetModuleHandleExA(
+        GET_MODULE_HANDLE_EX_FLAG_FROM_ADDRESS |
+        GET_MODULE_HANDLE_EX_FLAG_UNCHANGED_REFCOUNT,
+        (LPCSTR)&get_self_name,
+        &hModule
+    );
+
+    GetModuleFileNameA(hModule, path, MAX_PATH);
+
+    std::string s(path);
+    return s.substr(s.find_last_of("\\/") + 1);
+}
 int max = 0;
 #include "..\dist\json\json.h"
 #include "..\client\module\Module.h"
 #include "..\client\module\ModuleManager.h"
 
 std::string panel::from_client(std::string msg) {
-   // std::cout << "[recv] " << msg << std::endl;
+    //std::cout << "[recv] " << msg << std::endl;
     bool printLog = true;
     if (msg.find("run!") != std::string::npos) {
+        std::cout << "收到启动命令" << std::endl;
         SetLoginProgress(0.1f);
         return get_self_path();
+    }
+    if (msg.find("ask_dll_name") != std::string::npos) {
+        std::cout << "ask_dll_name" << std::endl;
+        SetLoginProgress(0.15f);
+        return get_self_name();
     }
     std::string result = right_of(msg, "start transformer ");
     if (result != "") {
@@ -432,31 +456,10 @@ void RefreshJavaList() {
     CloseHandle(snapshot);
 }
 #include "..\components\imgui_components.h"
-static int sel = -1;
-static std::vector<imgui_components::DropdownItem> items = {
-    {"aasdafafs"},
-    {"线asfsfaasf框"},
-    {"safafasdasdsa", true},  // true = 上方加分隔线
-    {"asdas"},
-    {"123123132"},
-    {"vvvvvvvvv"},
-    {"aaaasd"},
-    {"ggr"}
-};
+
 void draw_login_gui(gui& gui) {
     if (ImGui::BeginTabBar("Bar1")) {
         if (ImGui::BeginTabItem("Login")) {
-            imgui_components::ToggleButton("123", & remember);
-            if (imgui_components::Dropdown("##mode", items, &sel, "选择渲染模式", 160.f))
-                printf("选中: %s\n", items[sel].label.c_str());
-
-            static float scale = 1.0f;
-            static float speed = 3.5f;
-
-            imgui_components::SliderFloat("Scale", &scale, 0.f, 2.f);
-            imgui_components::SliderFloat("Speed", &speed, 0.f, 10.f, 0.f, 1);  // 1位小数
-
-
             std::string str = "Test Client";
             ImFont* glitchText = gui.glitchText;
             ImVec2 size = glitchText->CalcTextSizeA(
@@ -495,7 +498,7 @@ void draw_login_gui(gui& gui) {
                 ImGui::SetCursorPos({ 150, 140 });
                 if (ImGui::Button("Login", { 100, 40 }))
                 {
-                    std::cout << get_self_path() << std::endl;
+                    std::cout << get_self_path() << " " << get_self_name() << std::endl;
                     RefreshJavaList();
                     show_list = true;
                     selected = -1;
@@ -516,10 +519,12 @@ void draw_login_gui(gui& gui) {
                     if (selected >= 0 && ImGui::Button(u8"确认", { 100, 30 })) {
                         DWORD pid = java_processes[selected].pid;
                         SetLoginProgress(0.05f);
-                        const char* dllPath = (get_self_path() + "\\Core.dll").c_str();
+                        const char* dllPath = (get_self_path() + "\\" + get_self_name()).c_str();
+                        localserver::init();
+                        Sleep(1000);
                         utils::others::inject_dll(pid, dllPath);
                         max = 0;
-                        localserver::init();
+                        
                         show_list = false;
                     }
 
@@ -762,8 +767,8 @@ void panel::on_draw(gui& gui) {
     switch (currentPage)
     {
     case Login:
-        //draw_login_gui(gui);
-        vapelite_ui::on_draw(gui);
+        draw_login_gui(gui);
+        //vapelite_ui::on_draw(gui);
         break;
     case Main:
         vapelite_ui::on_draw(gui);

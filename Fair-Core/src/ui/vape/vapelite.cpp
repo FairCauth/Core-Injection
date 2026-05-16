@@ -497,7 +497,7 @@ void vapelite_ui::on_draw(gui& gui) {
         IM_COL32(255, 255, 255, 255)
     ))
     {
-
+        localserver::send_to_java("reconnect_gui");
     }
     #pragma endregion
 

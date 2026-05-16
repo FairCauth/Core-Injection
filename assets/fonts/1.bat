@@ -1,0 +1,1 @@
+Project1.exe -nocompress icon.ttf front_data > icon.h

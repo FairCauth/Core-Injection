@@ -76,6 +76,36 @@ void localserver::send(const std::string& message) {
     std::string msg = message + "\n";
     ::send(g_clientSock, msg.c_str(), (int)msg.size(), 0);
 }
+void localserver::send_to_java(const std::string& msg) {
+
+    WSADATA wsaData;
+    WSAStartup(MAKEWORD(2, 2), &wsaData);
+
+    SOCKET sock = socket(AF_INET, SOCK_STREAM, 0);
+
+    sockaddr_in addr{};
+    addr.sin_family = AF_INET;
+    addr.sin_port = htons(8888);
+
+    inet_pton(AF_INET, "127.0.0.1", &addr.sin_addr);
+
+    if (connect(sock, (sockaddr*)&addr, sizeof(addr)) == SOCKET_ERROR) {
+
+        std::cout << "Java connect failed\n";
+
+        closesocket(sock);
+        WSACleanup();
+        return;
+    }
+
+    std::string data = msg + "\n";
+
+    ::send(sock, data.c_str(), (int)data.size(), 0);
+
+    std::cout << "Send to Java: " << msg << "\n";
+    closesocket(sock);
+    WSACleanup();
+}
 bool localserver::check_port(int port) {
     WSADATA wsaData;
     WSAStartup(MAKEWORD(2, 2), &wsaData);
