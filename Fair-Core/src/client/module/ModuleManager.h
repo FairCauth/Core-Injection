@@ -13,7 +13,8 @@ public:
 		registerModule(new TestModule33());
 
 		//registerModule(new TestModule());
-		//registerModule(new TestModule2());
+		registerModule(new TestModule44());
+		registerModule(new TestModule55());
 		//registerModule(new TestModule33());
 		//registerModule(new TestModule44());
 		//registerModule(new TestModule55());

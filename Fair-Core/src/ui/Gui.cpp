@@ -18,13 +18,14 @@ static D3DPRESENT_PARAMETERS    g_d3dpp = {};
 
 bool done = false;
 bool g_NeedReset = false;
-#include "Font.h"
+#include "font\Font.h"
 extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 LRESULT WINAPI WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 
 
 #include "panel.h"
-
+#include "font/fonts.h"
+#include "font/icon.h"
 void gui::init() {
     WNDCLASSEX wc = { sizeof(WNDCLASSEX), CS_CLASSDC, WndProc, 0L, 0L, GetModuleHandle(NULL), NULL, NULL, NULL, NULL, L"Window", NULL };
     ::RegisterClassEx(&wc);
@@ -58,7 +59,13 @@ void gui::init() {
     ImFontConfig Font_cfg;
     Font_cfg.FontDataOwnedByAtlas = false;
 
-    Font = io.Fonts->AddFontFromMemoryTTF((void*)Font_data, Font_size, 16, &Font_cfg, io.Fonts->GetGlyphRangesChineseFull());
+    //fonts::font_10 = io.Fonts->AddFontFromMemoryTTF((void*)Font_data, Font_size, 10, &Font_cfg, io.Fonts->GetGlyphRangesChineseFull());
+    //fonts::font_12 = io.Fonts->AddFontFromMemoryTTF((void*)Font_data, Font_size, 12, &Font_cfg, io.Fonts->GetGlyphRangesChineseFull());
+    fonts::font_14 = io.Fonts->AddFontFromMemoryTTF((void*)Font_data, Font_size, 14, &Font_cfg, io.Fonts->GetGlyphRangesChineseFull());
+    fonts::font_16 = io.Fonts->AddFontFromMemoryTTF((void*)Font_data, Font_size, 16, &Font_cfg, io.Fonts->GetGlyphRangesChineseFull());
+    fonts::icons = io.Fonts->AddFontFromMemoryTTF((void*)front_data_data, front_data_size, 30, &Font_cfg, io.Fonts->GetGlyphRangesChineseFull());
+    //fonts::font_18 = io.Fonts->AddFontFromMemoryTTF((void*)Font_data, Font_size, 18, &Font_cfg, io.Fonts->GetGlyphRangesChineseFull());
+
     glitchText = io.Fonts->AddFontFromMemoryTTF((void*)Font_data, Font_size, 32, &Font_cfg, io.Fonts->GetGlyphRangesChineseFull());
     done = false;
     while (!done)
@@ -93,13 +100,13 @@ void gui::init() {
             {
                 style.FrameRounding = 5;
                
-                ImGui::PushFont(Font);
+                ImGui::PushFont(fonts::font_16);
                 panel::on_draw(*this);
                 ImGui::PopFont();
                 style.FrameRounding = 0;
 
             }
-
+            ImGui::End();
         }
 
         ImGui::EndFrame();

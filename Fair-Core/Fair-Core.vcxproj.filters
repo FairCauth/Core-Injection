@@ -87,6 +87,33 @@
     <ClCompile Include="src\common\instance\others.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="src\components\imgui_components.h">
+      <Filter>头文件</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Main.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="src\components\elements\slider.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ui\vape\vapelite.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="src\components\elements\combo.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="src\components\elements\toggle.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="src\components\imgui_components.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="src\components\scroll.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="src\components\elements\text.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\common\utils.h">
@@ -125,7 +152,7 @@
     <ClInclude Include="src\ui\Gui.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="src\ui\Font.h">
+    <ClInclude Include="src\ui\font\Font.h">
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="src\ImGui\imconfig.h">
@@ -189,6 +216,18 @@
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="src\client\setting\Settings.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ui\vape\vapelite.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ui\font\fonts.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="src\components\scroll.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ui\font\icon.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>
