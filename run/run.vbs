@@ -1,1 +1,1 @@
-CreateObject("WScript.Shell").Run "C:\Windows\System32\rundll32.exe Core.dll Run", 1, False
+CreateObject("WScript.Shell").Run "C:\Windows\System32\rundll32.exe Fair-Core.dll Run", 1, False
