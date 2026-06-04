@@ -12,9 +12,6 @@
 
 
 static HWND hwnd = NULL;
-static LPDIRECT3D9              g_pD3D = NULL;
-static LPDIRECT3DDEVICE9        g_pd3dDevice = NULL;
-static D3DPRESENT_PARAMETERS    g_d3dpp = {};
 
 bool done = false;
 bool g_NeedReset = false;
@@ -188,10 +185,10 @@ LRESULT WINAPI WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
         gui::WINDOW_WIDTH = LOWORD(lParam);
         gui::WINDOW_HEIGHT = HIWORD(lParam);
 
-        if (g_pd3dDevice != NULL && wParam != SIZE_MINIMIZED)
+        if (gui::g_pd3dDevice != NULL && wParam != SIZE_MINIMIZED)
         {
-            g_d3dpp.BackBufferWidth = LOWORD(lParam);
-            g_d3dpp.BackBufferHeight = HIWORD(lParam);
+            gui::g_d3dpp.BackBufferWidth = LOWORD(lParam);
+            gui::g_d3dpp.BackBufferHeight = HIWORD(lParam);
             g_NeedReset = true;
             /*         ResetDevice();*/
         }

@@ -118,13 +118,14 @@
       <LanguageStandard>stdcpp17</LanguageStandard>
       <Optimization>Disabled</Optimization>
       <IntrinsicFunctions>false</IntrinsicFunctions>
+      <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableUAC>false</EnableUAC>
-      <AdditionalDependencies>minhook.x64.lib;d3d9.lib;$(CoreLibraryDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>$(SolutionDir)ext\libs;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>minhook.x64.lib;d3d9.lib</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(SolutionDir)ext\libs</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -147,11 +148,12 @@
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableUAC>false</EnableUAC>
-      <AdditionalLibraryDirectories>$(SolutionDir)ext\libs;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>minhook.x64.lib;d3d9.lib;$(CoreLibraryDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(SolutionDir)ext\libs</AdditionalLibraryDirectories>
+      <AdditionalDependencies>minhook.x64.lib;d3d9.lib</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\common\classpack\class_pack.cpp" />
     <ClCompile Include="src\common\instance\jni_func.cpp" />
     <ClCompile Include="src\common\instance\convert.cpp" />
     <ClCompile Include="src\common\instance\others.cpp" />
@@ -182,9 +184,11 @@
     <ClCompile Include="src\native\native_bridge.cpp" />
     <ClCompile Include="src\native\preload\preloader.cpp" />
     <ClCompile Include="src\socket\localserver.cpp" />
+    <ClCompile Include="src\ui\impl\default_ui.cpp" />
     <ClCompile Include="src\ui\Gui.cpp" />
+    <ClCompile Include="src\ui\impl\login_ui.cpp" />
     <ClCompile Include="src\ui\panel.cpp" />
-    <ClCompile Include="src\ui\vape\vapelite.cpp" />
+    <ClCompile Include="src\ui\impl\vapelite_ui.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\client\module\category\Categories.h" />
@@ -197,6 +201,7 @@
     <ClInclude Include="src\client\setting\SettingBase.h" />
     <ClInclude Include="src\client\setting\SettingManager.h" />
     <ClInclude Include="src\client\setting\Settings.h" />
+    <ClInclude Include="src\common\classpack\class_pack.h" />
     <ClInclude Include="src\common\jvm\jvm_context.h" />
     <ClInclude Include="src\common\utils.h" />
     <ClInclude Include="src\components\scroll.h" />
@@ -215,16 +220,17 @@
     <ClInclude Include="src\native\details\natives.h" />
     <ClInclude Include="src\native\details\transformer_native.h" />
     <ClInclude Include="src\native\native_bridge.h" />
-    <ClInclude Include="src\native\preload\classes.h" />
     <ClInclude Include="src\native\preload\preloader.h" />
     <ClInclude Include="src\native\preload\preloader_class.h" />
     <ClInclude Include="src\socket\localserver.h" />
+    <ClInclude Include="src\ui\impl\default_ui.h" />
     <ClInclude Include="src\ui\font\Font.h" />
     <ClInclude Include="src\ui\font\fonts.h" />
     <ClInclude Include="src\ui\font\icon.h" />
     <ClInclude Include="src\ui\Gui.h" />
+    <ClInclude Include="src\ui\impl\login_ui.h" />
     <ClInclude Include="src\ui\panel.h" />
-    <ClInclude Include="src\ui\vape\vapelite.h" />
+    <ClInclude Include="src\ui\impl\vapelite_ui.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

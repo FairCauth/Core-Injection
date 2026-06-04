@@ -20,6 +20,9 @@ void Entry(JNIEnv* env) {
     //patch_jvm();
     //±£¥Êclassloader
     jobject classloader = utils::jni_func::get_classloader_from_name(env, "Render thread");
+    if (!classloader) {
+        MessageBoxA(NULL, "Classloader Not founded!", NULL, NULL);
+    }
     jvm_context::set_classloader(classloader);
 
     //º”‘ÿpreloader £®◊¢»ÎClass£©

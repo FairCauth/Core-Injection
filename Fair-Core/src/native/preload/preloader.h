@@ -13,7 +13,16 @@ namespace preloader {
  */
 extern "C" {
     namespace preloader_native {
+        JNIEXPORT jobject JNICALL Java_com_fair_preload_Preloader_getClassLoader(
+            JNIEnv* env,
+            jclass  clazz
+        );
 
+        JNIEXPORT jobjectArray JNICALL Java_com_fair_preload_Preloader_getClassByte(
+            JNIEnv* env,
+            jclass  clazz,
+            jint mc_ver
+        );
         /**
          * public static native void log(String string);
          * JNI signature: (Ljava/lang/String;)V
@@ -43,6 +52,7 @@ extern "C" {
             jclass  clazz,
             jstring target
         );
+
 
     }
 }

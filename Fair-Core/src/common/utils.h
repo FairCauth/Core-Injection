@@ -25,5 +25,7 @@ namespace utils {
 	namespace others {
 		bool inject_dll(DWORD processID, const char* dllPath);
 		DWORD get_process_id(const char* processName);
+		std::string get_self_path();
+		std::string get_self_name();
 	}
 }

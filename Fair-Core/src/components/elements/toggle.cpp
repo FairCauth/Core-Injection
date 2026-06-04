@@ -79,7 +79,7 @@ namespace imgui_components {
             rounding
         );
 
-        float thumb_r = track_size.y * 0.5f - 4.0f;
+        float thumb_r = track_size.y * 0.5f - 3.0f;
         float thumb_d = thumb_r * 2.0f;
 
         float thumb_x =

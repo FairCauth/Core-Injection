@@ -4,6 +4,7 @@ namespace jvm_context {
 	static jvmtiEnv* g_jvmti = nullptr;
 
 	static jobject g_classloader = nullptr;
+	static jobjectArray g_classesData = nullptr;
 
 	void set_jvm(JavaVM* jvm) {
 		if (g_vm == nullptr) {
@@ -15,6 +16,8 @@ namespace jvm_context {
 	void set_classloader(jobject cl) {
 		g_classloader = cl;
 	}
+
+
 	jobject get_classloader() {
 		return g_classloader;
 	}

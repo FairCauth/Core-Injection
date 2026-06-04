@@ -276,7 +276,7 @@ namespace imgui_components {
                     item.label.c_str(),
                     selected,
                     ImGuiSelectableFlags_None,
-                    ImVec2(0, ROW_H - 4.f)))
+                    ImVec2(0, ROW_H - 8.f)))
                 {
                     *current = i;
                     changed = true;

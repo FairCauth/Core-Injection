@@ -23,9 +23,12 @@ bool isRunningInRundll32() {
 }
 void AllocConsole_Init() {
     AllocConsole();
+
     freopen_s((FILE**)stdout, "CONOUT$", "w", stdout);
     freopen_s((FILE**)stderr, "CONOUT$", "w", stderr);
     std::ios::sync_with_stdio(true);
+
+
 }
 BOOL APIENTRY DllMain( HMODULE hModule,
                        DWORD  ul_reason_for_call,

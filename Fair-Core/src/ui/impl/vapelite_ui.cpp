@@ -1,4 +1,4 @@
-#include "vapelite.h"
+Ôªø#include "vapelite_ui.h"
 #include "..\..\client\module\ModuleManager.h"
 #include "..\..\components\imgui_components.h"
 #include "..\..\client\module\category\CategoryManager.h"
@@ -55,7 +55,7 @@ void DrawModuleCard(Module* module, float width)
 
 
 
-    #pragma region Õº±ÍªÊ÷∆
+#pragma region ÂõæÊ†áÁªòÂà∂
     float icon_w = 62.0f;
 
     ImU32 icon_bg = module->enable
@@ -95,7 +95,7 @@ void DrawModuleCard(Module* module, float width)
         : IM_COL32(188, 188, 188, 255),
         icon
     );
-    #pragma endregion
+#pragma endregion
 
 
     //draw->AddRect(
@@ -112,7 +112,7 @@ void DrawModuleCard(Module* module, float width)
         fonts::font_16,
         17.0f,
         ImVec2(min.x + icon_w + 18, min.y + 26),
-        module->enable ? IM_COL32(255,255,255,255) : IM_COL32(188, 188, 188, 255),
+        module->enable ? IM_COL32(255, 255, 255, 255) : IM_COL32(188, 188, 188, 255),
         module->getName().c_str()
     );
     //outline
@@ -135,7 +135,7 @@ void DrawModuleCard(Module* module, float width)
     //    desc
     //);
 
-    #pragma region …Ë÷√Õº±ÍªÊ÷∆
+#pragma region ËÆæÁΩÆÂõæÊ†áÁªòÂà∂
     ImVec2 toggle_size(44, 22);
     ImVec2 toggle_pos(
         max.x - 20.0f - 18.0f - toggle_size.x,
@@ -178,7 +178,7 @@ void DrawModuleCard(Module* module, float width)
     draw->AddCircleFilled(ImVec2(center.x, center.y - spacing), dot_r, dot_col);
     draw->AddCircleFilled(center, dot_r, dot_col);
     draw->AddCircleFilled(ImVec2(center.x, center.y + spacing), dot_r, dot_col);
-    #pragma endregion 
+#pragma endregion 
 
 
     if (menu_hovered && ImGui::IsMouseClicked(ImGuiMouseButton_Left))
@@ -188,7 +188,7 @@ void DrawModuleCard(Module* module, float width)
         setting_panel_module = module;
     }
 
-    //¥Úø™ƒ£øÈ ¬º˛
+    //ÊâìÂºÄÊ®°Âùó‰∫ã‰ª∂
     if (card_clicked && !menu_hovered)
     {
         module->toggle();
@@ -229,14 +229,14 @@ void DrawSettingsPanel(Module* module, float width)
             title_min.y + ImGui::GetWindowHeight()
         );
 
-        //±ÍÃ‚¿∏ÃÓ≥‰—’…´
+        //Ê†áÈ¢òÊ†èÂ°´ÂÖÖÈ¢úËâ≤
         draw->AddRectFilled(
             title_min,
             title_max,
-            IM_COL32(24, 24, 26, 255)
+            IM_COL32(38, 38, 40, 255)
         );
 
-        //∑÷∏Óœﬂ
+        //ÂàÜÂâ≤Á∫ø
         draw->AddLine(
             ImVec2(title_min.x, title_max.y - 1.0f),
             ImVec2(title_max.x, title_max.y - 1.0f),
@@ -246,7 +246,7 @@ void DrawSettingsPanel(Module* module, float width)
 
         ImGui::SetCursorPos(ImVec2(12, 16));
 
-        //∑µªÿÕº±Í∞¥≈•
+        //ËøîÂõûÂõæÊ†áÊåâÈíÆ
         if (imgui_components::TextButton(
             "##back_button",
             "j",
@@ -264,13 +264,13 @@ void DrawSettingsPanel(Module* module, float width)
         ImGui::SameLine();
 
         ImGui::SetCursorPosY(18);
-        ImGui::Text("%s Settings", module->getName().c_str());  
-    
+        ImGui::Text("%s Settings", module->getName().c_str());
+
 
 
 
         ImGui::SetCursorPos(ImVec2(0, 55));
-        #pragma region …Ë÷√◊Èº˛ªÊ÷∆
+#pragma region ËÆæÁΩÆÁªÑ‰ª∂ÁªòÂà∂
         ImGui::BeginChild(
             "##module_setting_content",
             ImVec2(width, 0), 0, ImGuiWindowFlags_NoScrollWithMouse
@@ -284,11 +284,11 @@ void DrawSettingsPanel(Module* module, float width)
                 content_min.x + ImGui::GetWindowWidth(),
                 content_min.y + ImGui::GetWindowHeight()
             );
-
+            ImU32 bg = IM_COL32(31, 31, 33, 255);
             draw->AddRectFilled(
                 content_min,
                 content_max,
-                IM_COL32(16, 16, 20, 255)
+                bg
             );
             for (auto setting : SettingManager::getSettings(module))
             {
@@ -337,11 +337,12 @@ void DrawSettingsPanel(Module* module, float width)
                     settingY += 20;
                     ImGui::SetCursorPos(ImVec2(14, settingY));
                     float value = numberSetting->getValue();
-                    if (imgui_components::SliderFloat(
+                    if (imgui_components::SliderFloat_cutout(
                         numberSetting->getName().c_str(),
                         &value,
                         numberSetting->minValue,
-                        numberSetting->maxValue, width - 50)) {
+                        numberSetting->maxValue, width - 50, 2,bg
+                    )) {
 
                         Json::Value json;
                         Json::FastWriter writer;
@@ -377,7 +378,7 @@ void DrawSettingsPanel(Module* module, float width)
                         "##mode",
                         items,
                         &current,
-                        setting.first.c_str(), 
+                        setting.first.c_str(),
                         width - 60.0f
                     ))
                     {
@@ -400,7 +401,7 @@ void DrawSettingsPanel(Module* module, float width)
             }
 
         }
-        #pragma endregion
+#pragma endregion
 
 
         ImGui::SetCursorPosY((float)settingY);
@@ -410,7 +411,7 @@ void DrawSettingsPanel(Module* module, float width)
         ImGui::EndChild();
         //ImGui::EndChild();
     }
-    
+
     ImGui::EndChild();
 }
 float MoveTowards(float current, float target, float maxDelta)
@@ -438,17 +439,17 @@ void vapelite_ui::on_draw(gui& gui) {
         win_min.x + ImGui::GetWindowWidth(),
         win_min.y + ImGui::GetWindowHeight()
     );
-    //±≥æ∞—’…´
+    //ËÉåÊôØÈ¢úËâ≤
     draw->AddRectFilled(
         win_min,
         win_max,
-        IM_COL32(20, 22, 24, 255), 
-        10.0f 
+        IM_COL32(20, 22, 24, 255),
+        10.0f
     );
 
 
 
-    #pragma region …œ√Êµº∫Ω¿∏ªÊ÷∆
+#pragma region ‰∏äÈù¢ÂØºËà™Ê†èÁªòÂà∂
     //Home
     ImGui::SetCursorPos({ 40, 25 });
     if (imgui_components::TextButton(
@@ -466,7 +467,7 @@ void vapelite_ui::on_draw(gui& gui) {
     draw->AddText(
         fonts::font_16,
         18,
-        {80, 26},
+        { 80, 26 },
         IM_COL32(255, 255, 255, 255),
         "Home"
     );
@@ -483,7 +484,7 @@ void vapelite_ui::on_draw(gui& gui) {
         IM_COL32(255, 255, 255, 255)
     ))
     {
-        
+
     }
     ImGui::SetCursorPos({ gui::WINDOW_WIDTH - 80 - 60, 25 });
 
@@ -499,14 +500,14 @@ void vapelite_ui::on_draw(gui& gui) {
     {
         localserver::send_to_java("reconnect_gui");
     }
-    #pragma endregion
+#pragma endregion
 
 
 
     float panel_target_w = 280.0f;
     bool show_panel = setting_panel_opened && setting_panel_module != nullptr;
 
-    #pragma region SettingPanel∆Ù∂Ø∂Øª≠
+#pragma region SettingPanelÂêØÂä®Âä®Áîª
     //settings_panel_anim += ((show_panel ? 1.0f : 0.0f) - settings_panel_anim)
     //    * ImMin(1.0f, ImGui::GetIO().DeltaTime * 14.0f);
     float target = show_panel ? 1.0f : 0.0f;
@@ -522,7 +523,7 @@ void vapelite_ui::on_draw(gui& gui) {
         setting_panel_module = nullptr;
         settings_panel_anim = 0.0f;
     }
-    #pragma endregion
+#pragma endregion
 
     float shift = (panel_target_w - 130.0f) * settings_panel_anim;
 
@@ -535,21 +536,28 @@ void vapelite_ui::on_draw(gui& gui) {
     ));
     constexpr float NAV_W = 180.f;
     //Test
-    #pragma region Categoryµº∫Ω¿∏ªÊ÷∆
+#pragma region CategoryÂØºËà™Ê†èÁªòÂà∂
     ImGui::BeginChild("##nav", ImVec2(NAV_W, nav_h), false);
     //for (auto categoryMap : CategoryManager::getCategories()) {
     for (auto categoryMap : CategoryManager::getCategories()) {
         ImGui::SetCursorPosX(30);
 
         bool selected = (currentCategory == categoryMap.second);
+        ImVec2 item_size = ImVec2(NAV_W - 8.f, 40.f);
+        ImVec2 item_min = ImGui::GetCursorScreenPos();
+        ImVec2 item_max = ImVec2(
+            item_min.x + item_size.x,
+            item_min.y + item_size.y
+        );
+        bool hovered = ImGui::IsMouseHoveringRect(item_min, item_max);
 
-        //È´ò‰∫ÆÈÄâ‰∏≠È°?
         if (selected)
-        {
             ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(1, 1, 1, 1));
-        }
+        else if (hovered)
+            ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0.85f, 0.85f, 0.90f, 1));
         else
             ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(.55f, .55f, .6f, 1));
+
 
 
         ImGui::PushStyleColor(ImGuiCol_Header, ImVec4(0, 0, 0, 0));
@@ -583,11 +591,11 @@ void vapelite_ui::on_draw(gui& gui) {
     }
 
     ImGui::EndChild();
-    #pragma endregion
+#pragma endregion
 
-    if (currentCategory == nullptr) 
+    if (currentCategory == nullptr)
         return;
-   // ImGui::PushStyleColor(ImGuiCol_ChildBg, ImVec4(1, 1, 1, .5f));
+    // ImGui::PushStyleColor(ImGuiCol_ChildBg, ImVec4(1, 1, 1, .5f));
     float spacing = ImGui::GetStyle().ItemSpacing.x;
 
     ImVec2 module_base = ImVec2(
@@ -596,7 +604,7 @@ void vapelite_ui::on_draw(gui& gui) {
     );
 
     float module_area_w = gui::WINDOW_WIDTH - NAV_W;
-    float module_area_w_1 = gui::WINDOW_WIDTH - NAV_W - 120;
+    float module_area_w_1 = gui::WINDOW_WIDTH - NAV_W - 135;
     float module_area_h = nav_h;
 
     ImGui::SetCursorScreenPos(ImVec2(
@@ -604,19 +612,19 @@ void vapelite_ui::on_draw(gui& gui) {
         module_base.y
     ));
 
-    #pragma region ªÊ÷∆ƒ£øÈ
+#pragma region ÁªòÂà∂Ê®°Âùó
     ImGui::BeginChild("##module", ImVec2(module_area_w_1, module_area_h), false
     );
     std::vector<Module*> modules = ModuleManager::getModulesFromCategory(*currentCategory, "");
-    float card_width = module_area_w_1 - 20;
+    float card_width = module_area_w_1 - 25;
     for (auto module : modules) {
         DrawModuleCard(module, card_width);
 
     }
     ImGui::EndChild();
-    #pragma endregion
+#pragma endregion
 
-    #pragma region ªÊ÷∆…Ë÷√¥∞ø⁄
+#pragma region ÁªòÂà∂ËÆæÁΩÆÁ™óÂè£
     if (settings_panel_anim > 0.001f && setting_panel_module != nullptr)
     {
         float panel_x =
@@ -630,7 +638,7 @@ void vapelite_ui::on_draw(gui& gui) {
         DrawSettingsPanel(setting_panel_module, panel_target_w);
     }
 
-    #pragma endregion
+#pragma endregion
 
 
 

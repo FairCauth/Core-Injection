@@ -48,6 +48,15 @@ namespace imgui_components {
         int         decimals = 2,
         bool        disabled = false);
 
+    bool SliderFloat_cutout(
+        const char* label,
+        float* v,
+        float       v_min,
+        float       v_max,
+        float       width,
+        int         decimals, 
+        ImU32 cutout_col
+    );
     bool TextButton(
         const char* id,
         const char* text,

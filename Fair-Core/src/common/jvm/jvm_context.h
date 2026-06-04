@@ -11,4 +11,5 @@ namespace jvm_context {
 	JavaVM* get_jvm();
 	jvmtiEnv* get_jvmTi();
 
+
 }

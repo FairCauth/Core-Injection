@@ -68,4 +68,35 @@ namespace utils::others {
 
         return true;
     }
+
+    std::string get_self_path() {
+        char path[MAX_PATH];
+        HMODULE hModule = NULL;
+        GetModuleHandleExA(
+            GET_MODULE_HANDLE_EX_FLAG_FROM_ADDRESS | GET_MODULE_HANDLE_EX_FLAG_UNCHANGED_REFCOUNT,
+            (LPCSTR)&get_self_path,
+            &hModule
+        );
+        GetModuleFileNameA(hModule, path, MAX_PATH);
+        std::string s(path);
+        return s.substr(0, s.find_last_of("\\/"));
+    }
+    std::string get_self_name() {
+
+        char path[MAX_PATH];
+
+        HMODULE hModule = NULL;
+
+        GetModuleHandleExA(
+            GET_MODULE_HANDLE_EX_FLAG_FROM_ADDRESS |
+            GET_MODULE_HANDLE_EX_FLAG_UNCHANGED_REFCOUNT,
+            (LPCSTR)&get_self_name,
+            &hModule
+        );
+
+        GetModuleFileNameA(hModule, path, MAX_PATH);
+
+        std::string s(path);
+        return s.substr(s.find_last_of("\\/") + 1);
+    }
 }

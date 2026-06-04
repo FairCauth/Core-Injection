@@ -7,7 +7,7 @@
 #include "..\..\ImGui\imstb_truetype.h"
 #include "..\..\ImGui\imgui.h"
 #include "..\imgui_components.h"
-
+#include <iostream>
 namespace imgui_components {
 
 	static constexpr float ROW_H = 22.f;
@@ -15,13 +15,13 @@ namespace imgui_components {
 	static constexpr float THUMB_R = 8.f;
 	static constexpr float LABEL_W = 70.f;
 	static constexpr float VAL_W = 42.f;
-    bool SliderFloat(
+    bool _SliderFloat(
         const char* label,
         float* v,
         float v_min,
         float v_max,
         float width,
-        int decimals,
+        int decimals, ImU32 cutout_col,
         bool disabled)
     {
         ImGuiStyle& sty = ImGui::GetStyle();
@@ -109,7 +109,7 @@ namespace imgui_components {
         }
 
         float& anim_t = anim_map[id];
-        
+
         //animation
         float anim_speed = 18.0f;
         anim_t += (t - anim_t) * ImMin(1.0f, io.DeltaTime * anim_speed);
@@ -146,15 +146,47 @@ namespace imgui_components {
             TRACK_H * 0.5f
         );
 
-
         float thumb_r = held ? THUMB_R + 1.5f : hovered ? THUMB_R + 0.8f : THUMB_R;
-
+        ImVec2 thumb_center(thumb_x, track_cy);
+        if (cutout_col != NULL) {
+            float cutout_w = 3.0f;
+            dl->AddCircleFilled(
+                thumb_center,
+                thumb_r + cutout_w,
+                cutout_col
+            );
+        }
+       
         dl->AddCircleFilled(
-            ImVec2(thumb_x, track_cy),
+            thumb_center,
             thumb_r,
             col_thumb
         );
 
         return changed;
     }
+    bool SliderFloat(
+        const char* label,
+        float* v,
+        float v_min,
+        float v_max,
+        float width,
+        int decimals,
+        bool disabled)
+    {
+        return _SliderFloat(label, v, v_min, v_max, width, decimals, NULL, disabled);
+    }
+    bool SliderFloat_cutout(
+        const char* label,
+        float* v,
+        float v_min,
+        float v_max,
+        float width,
+        int decimals, 
+        ImU32 cutout_col
+    )
+    {
+        return _SliderFloat(label, v, v_min, v_max, width, decimals, cutout_col,  false);
+    }
+
 }

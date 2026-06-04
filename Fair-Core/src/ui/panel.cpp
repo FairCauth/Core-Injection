@@ -198,62 +198,62 @@ void SetLoginProgress(float target)
     g_ProgressTarget = ImClamp(target, 0.0f, 1.0f);
     g_LoginLoading = true;
 }
-static char text[1024] = "";
-static char pwd[1024] = "";
-static bool remember;
+
 #include "..\socket\localserver.h"
 std::string right_of(const std::string& s, const std::string& delimiter) {
     size_t pos = s.find(delimiter);
     if (pos == std::string::npos) return "";
     return s.substr(pos + delimiter.size());
 }
-std::string get_self_path() {
-    char path[MAX_PATH];
-    HMODULE hModule = NULL;
-    GetModuleHandleExA(
-        GET_MODULE_HANDLE_EX_FLAG_FROM_ADDRESS | GET_MODULE_HANDLE_EX_FLAG_UNCHANGED_REFCOUNT,
-        (LPCSTR)&get_self_path,
-        &hModule
-    );
-    GetModuleFileNameA(hModule, path, MAX_PATH);
-    std::string s(path);
-    return s.substr(0, s.find_last_of("\\/"));
-}
-std::string get_self_name() {
 
-    char path[MAX_PATH];
-
-    HMODULE hModule = NULL;
-
-    GetModuleHandleExA(
-        GET_MODULE_HANDLE_EX_FLAG_FROM_ADDRESS |
-        GET_MODULE_HANDLE_EX_FLAG_UNCHANGED_REFCOUNT,
-        (LPCSTR)&get_self_name,
-        &hModule
-    );
-
-    GetModuleFileNameA(hModule, path, MAX_PATH);
-
-    std::string s(path);
-    return s.substr(s.find_last_of("\\/") + 1);
-}
 int max = 0;
 #include "..\dist\json\json.h"
 #include "..\client\module\Module.h"
 #include "..\client\module\ModuleManager.h"
-
+#include "..\common\utils.h"
 std::string panel::from_client(std::string msg) {
     //std::cout << "[recv] " << msg << std::endl;
     bool printLog = true;
     if (msg.find("run!") != std::string::npos) {
         std::cout << "收到启动命令" << std::endl;
         SetLoginProgress(0.1f);
-        return get_self_path();
+        return utils::others::get_self_path();
     }
     if (msg.find("ask_dll_name") != std::string::npos) {
         std::cout << "ask_dll_name" << std::endl;
         SetLoginProgress(0.15f);
-        return get_self_name();
+        return utils::others::get_self_name();
+    }
+    if (msg.find("mc_ver") != std::string::npos) {
+        int mc_ver = std::stoi(right_of(msg, "mc_ver "));
+        //0 no obf
+        //1 vanilla
+        //2 forge
+        //3 fabric
+        std::string v;
+
+        switch (mc_ver) {
+        case 0:
+            v = "noobf";
+            break;
+
+        case 1:
+            v = "vanilla";
+            break;
+
+        case 2:
+            v = "forge";
+            break;
+
+        case 3:
+            v = "fabric";
+            break;
+
+        default:
+            v = "unknown";
+            break;
+        }
+        std::cout << "Loaded Mapping " << v << std::endl;
     }
     std::string result = right_of(msg, "start transformer ");
     if (result != "") {
@@ -456,7 +456,9 @@ void RefreshJavaList() {
     CloseHandle(snapshot);
 }
 #include "..\components\imgui_components.h"
-
+static char text[1024] = "";
+static char pwd[1024] = "";
+static bool remember;
 void draw_login_gui(gui& gui) {
     if (ImGui::BeginTabBar("Bar1")) {
         if (ImGui::BeginTabItem("Login")) {
@@ -498,7 +500,7 @@ void draw_login_gui(gui& gui) {
                 ImGui::SetCursorPos({ 150, 140 });
                 if (ImGui::Button("Login", { 100, 40 }))
                 {
-                    std::cout << get_self_path() << " " << get_self_name() << std::endl;
+                    std::cout << utils::others::get_self_path() << " " << utils::others::get_self_name() << std::endl;
                     RefreshJavaList();
                     show_list = true;
                     selected = -1;
@@ -508,7 +510,7 @@ void draw_login_gui(gui& gui) {
                     ImGui::SetNextWindowSize({ 350, 200 }, ImGuiCond_Once);
                     ImGui::SetNextWindowPos({ 200, 150 }, ImGuiCond_Once);
                     ImGui::SetNextWindowFocus();
-                    ImGui::Begin(u8"选择进程", &show_list);
+                    ImGui::Begin("Select a process", &show_list);
 
                     for (int i = 0; i < java_processes.size(); i++) {
                         std::string label = "[" + std::to_string(java_processes[i].pid) + "] " + java_processes[i].windowTitle;
@@ -516,13 +518,15 @@ void draw_login_gui(gui& gui) {
                             selected = i;
                     }
 
-                    if (selected >= 0 && ImGui::Button(u8"确认", { 100, 30 })) {
+                    if (selected >= 0 && ImGui::Button("OK", { 100, 30 })) {
                         DWORD pid = java_processes[selected].pid;
                         SetLoginProgress(0.05f);
-                        const char* dllPath = (get_self_path() + "\\" + get_self_name()).c_str();
+                        std::string dllPath =
+                            utils::others::get_self_path() + "\\" + utils::others::get_self_name();
+                        
                         localserver::init();
                         Sleep(1000);
-                        utils::others::inject_dll(pid, dllPath);
+                        utils::others::inject_dll(pid, dllPath.c_str());
                         max = 0;
                         
                         show_list = false;
@@ -582,192 +586,19 @@ void draw_login_gui(gui& gui) {
 
 }
 
-#include "..\client\module\ModuleManager.h"
-#include "..\client\module\category\CategoryManager.h"
-static Category* currentCategory = nullptr;
-static bool globalFilter = true;
+
 void draw_main_gui(gui& gui) {
-    static int selectedItem = -1;
-    #pragma region CategoriesMenu
-    ImGui::SetCursorPos({ 2,3 });
-
-    if (ImGui::BeginTabBar("MyTabBar")) {
-        for (auto categoryMap : CategoryManager::getCategories()) {
-            if (ImGui::BeginTabItem(categoryMap.first.c_str()))
-            {
-                currentCategory = categoryMap.second;
-                ImGui::EndTabItem();
-            }
-        }
-    }
-
-    #pragma endregion
-
-    if (currentCategory != nullptr) {
-        std::string filterText(text);
-
-        std::vector<Module*> modules = (globalFilter && !filterText.empty()) ? 
-            ModuleManager::getFilteredModules(filterText) : 
-            ModuleManager::getModulesFromCategory(*currentCategory, filterText
-        );
-        
-        #pragma region 搜索框
-        if (selectedItem > modules.size() - 1) selectedItem = -1;
-        ImGui::SetNextItemWidth(240);
-        ImGui::InputText("##Filter", text, sizeof(text));
-        ImGui::SameLine();
-        ImGui::Text("Filter");
-        ImGui::SameLine();
-
-        ImGui::Checkbox("All Modules", &globalFilter);
-        
-        #pragma endregion
-
-        #pragma region 模块列表框
-        if (ImGui::BeginListBox("##listbox", ImVec2(150, gui::WINDOW_HEIGHT - 70))) {
-            int index = 0;
-            for (auto module : modules) {
-                bool isSelected = (currentCategory->selectedItemIndex == index);
-                if (ImGui::Selectable(module->getName().c_str(), isSelected || module->isEnable())) {
-                    selectedItem = index;
-                    //currentCategory = module->category;
-                    currentCategory->selectedItemIndex = index;
-                }
-
-                if (isSelected) {
-                    ImGui::SetItemDefaultFocus();
-                }
-                ++index;
-            }
-            ImGui::EndListBox();
-        }
-        #pragma endregion
-        ImGui::SameLine();
-        if (selectedItem != -1 && !modules.empty() && currentCategory->selectedItemIndex != -1) {
-
-            Module* selectedModule = modules[currentCategory->selectedItemIndex];
-            ImGui::BeginChild("##A", { gui::WINDOW_WIDTH - 170 , gui::WINDOW_HEIGHT }, false, ImGuiWindowFlags_NoScrollbar);
-
-
-            #pragma region 模块标题栏 
-            ImGui::BeginChild("##B", { gui::WINDOW_WIDTH - 170  , 23 }, false);
-            ImGui::Text(selectedModule->getName().c_str());
-            //ImGui::SameLine();
-            ImGui::Separator();
-            ImGui::EndChild();
-            #pragma endregion
-
-            //设置
-            ImGui::BeginChild("##C", { gui::WINDOW_WIDTH - 170 , gui::WINDOW_HEIGHT - 100 }, false);
-            bool enable = selectedModule->enable;
-            if (ImGui::Checkbox("Enable", &enable)) {
-                Json::Value json;
-                Json::FastWriter writer;
-                json["type"] = "update_module";
-                json["module"] = selectedModule->getName();
-                json["enable"] = enable;
-                const std::string data = writer.write(json);
-                localserver::send(data);
-            }
-            #pragma region 设置组件
-            for (auto setting : SettingManager::getSettings(selectedModule))
-            {
-                auto getInfo = [&](int level, bool display) -> int {
-                    if (!display) return -1;
-                    int offsetX = level * 20 + 4;
-                    if (offsetX != 4) {
-                        ImVec2 cursorPos = ImGui::GetCursorScreenPos();
-                        ImVec2 nodePos = ImVec2(cursorPos.x, cursorPos.y + ImGui::GetTextLineHeight() * 0.6f);
-                        ImDrawList* draw_list = ImGui::GetWindowDrawList();
-                        draw_list->AddLine(nodePos, ImVec2(nodePos.x + level * 20 - 6, nodePos.y), IM_COL32(200, 200, 200, 255), 1.0f);
-                        draw_list->AddLine(nodePos, ImVec2(nodePos.x, nodePos.y - 26), IM_COL32(200, 200, 200, 255), 1.0f);
-                    }
-                    return offsetX;
-                };
-
-                #pragma region BooleanSetting
-                if (auto booleanSetting = dynamic_cast<BooleanSetting*>(setting.second)) {
-                    int offsetX = getInfo(booleanSetting->level, booleanSetting->display);
-                    if (offsetX == -1) continue;
-                    ImGui::SetCursorPosX(offsetX);
-                    bool value = booleanSetting->getValue();
-                    if (ImGui::Checkbox(booleanSetting->getName().c_str(), &value)) {
-                        Json::Value json;
-                        Json::FastWriter writer;
-                        json["type"] = "update_setting";
-                        json["update_type"] = "boolean";
-                        json["module"] = selectedModule->getName();
-                        json["setting"] = booleanSetting->getName();
-                        json["value"] = value;
-                        const std::string data = writer.write(json);
-                        localserver::send(data);
-
-  
-                    }
-                }
-                #pragma endregion
-
-                #pragma region NumberSetting
-                else if (auto numberSetting = dynamic_cast<NumberSetting*>(setting.second)) {
-                    int offsetX = getInfo(numberSetting->level, numberSetting->display);
-                    if (offsetX == -1) continue;
-
-                    ImGui::SetCursorPosX(offsetX);
-
-                    float value = numberSetting->getValue();
-                    if (ImGui::SliderFloat(numberSetting->getName().c_str(), &value, numberSetting->minValue, numberSetting->maxValue, numberSetting->precisePattern.c_str())) {
-                        Json::Value json;
-                        Json::FastWriter writer;
-                        json["type"] = "update_setting";
-                        json["update_type"] = "number";
-                        json["module"] = selectedModule->getName();
-                        json["setting"] = numberSetting->getName();
-                        json["value"] = value;
-                        const std::string data = writer.write(json);
-                        localserver::send(data);
-                    }
-                }
-                #pragma endregion
-
-                #pragma region ModeSetting
-                else if (auto modeSetting = dynamic_cast<ModeSetting*>(setting.second)) {
-                    int offsetX = getInfo(modeSetting->level, modeSetting->display);
-                    if (offsetX == -1) continue;
-
-                    ImGui::SetCursorPosX(offsetX);
-                    ImGui::SetNextItemWidth(160);
-                    int current = modeSetting->current;
-                    if (ImGui::Combo(setting.first.c_str(), &current, modeSetting->arr, modeSetting->values.size())) {
-                        modeSetting->setModeValue(current);
-                        Json::Value json;
-                        Json::FastWriter writer;
-                        json["type"] = "update_setting";
-                        json["update_type"] = "mode";
-                        json["module"] = selectedModule->getName();
-                        json["setting"] = modeSetting->getName();
-                        json["value"] = modeSetting->values[current];
-                        const std::string data = writer.write(json);
-                        localserver::send(data);
-                    }
-                }
-                #pragma endregion
-            }
-            #pragma endregion
-            ImGui::EndChild();
-
-        }
-    }
+    
 }
 
-
-
-#include "vape/vapelite.h"
+#include "impl/vapelite_ui.h"
 void panel::on_draw(gui& gui) {
 
     switch (currentPage)
     {
     case Login:
         draw_login_gui(gui);
+        //music_ui::on_draw(gui);
         //vapelite_ui::on_draw(gui);
         break;
     case Main:

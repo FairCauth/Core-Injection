@@ -96,7 +96,7 @@
     <ClCompile Include="src\components\elements\slider.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="src\ui\vape\vapelite.cpp">
+    <ClCompile Include="src\ui\impl\vapelite_ui.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="src\components\elements\combo.cpp">
@@ -112,6 +112,15 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="src\components\elements\text.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ui\impl\default_ui.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ui\impl\login_ui.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="src\common\classpack\class_pack.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>
@@ -144,9 +153,6 @@
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="src\native\details\transformer_native.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="src\native\preload\classes.h">
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="src\ui\Gui.h">
@@ -218,7 +224,7 @@
     <ClInclude Include="src\client\setting\Settings.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="src\ui\vape\vapelite.h">
+    <ClInclude Include="src\ui\impl\vapelite_ui.h">
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="src\ui\font\fonts.h">
@@ -228,6 +234,15 @@
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="src\ui\font\icon.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ui\impl\default_ui.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ui\impl\login_ui.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="src\common\classpack\class_pack.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>
